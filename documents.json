@@ -1,11 +1,53 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "sales-confirmation",
+    "title": "Draft sales order confirmation",
+    "for_each": "select id,code from orders where kind='sales' and status<>'cancelled'",
+    "file": "id",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Order details",
+        "note": "Draft only. Amounts exclude tax. Review before issue.",
+        "sql": "select code,partner,location,status,due_date::text,total,(select currency from settings limit 1) as currency from v_orders where id=$1"
+      },
+      {
+        "title": "Order lines",
+        "sql": "select i.code,i.name,i.unit,l.quantity,l.completed,l.unit_price,(l.quantity*l.unit_price)::numeric(14,2) as line_amount from order_lines l join items i on i.id=l.item_id where l.order_id=$1 order by l.line_no"
+      }
+    ]
+  },
+  {
+    "name": "purchase-order",
+    "title": "Draft purchase order",
+    "for_each": "select id,code from orders where kind='purchase' and status<>'cancelled'",
+    "file": "id",
+    "sections": [
+      {
+        "title": "Order details",
+        "note": "Draft only. Amounts exclude tax. Review before issue.",
+        "sql": "select code,partner,location,status,due_date::text,total,(select currency from settings limit 1) as currency from v_orders where id=$1"
+      },
+      {
+        "title": "Order lines",
+        "sql": "select i.code,i.name,i.unit,l.quantity,l.completed,l.unit_price,(l.quantity*l.unit_price)::numeric(14,2) as line_amount from order_lines l join items i on i.id=l.item_id where l.order_id=$1 order by l.line_no"
+      }
+    ]
+  },
+  {
+    "name": "job-cost-sheet",
+    "title": "Job cost sheet",
+    "for_each": "select id from jobs",
+    "file": "id",
+    "sections": [
+      {
+        "title": "Budget and position",
+        "note": "Recorded job costs only. Order shipments are not automatically charged to jobs.",
+        "sql": "select code,name,customer,status,budget,cost,budget_left,revenue,margin,(select currency from settings limit 1) as currency from v_jobs where id=$1"
+      },
+      {
+        "title": "Costs recorded",
+        "sql": "select category,amount,note,created_at from job_costs where job_id=$1 order by created_at"
+      }
     ]
   }
 ]

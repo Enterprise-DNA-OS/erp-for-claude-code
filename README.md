@@ -1,115 +1,140 @@
-<h1 align="center">ERP for Claude Code</h1>
+# ERP for Claude Code
 
-<p align="center">
-  <strong>The open-source ERP (orders, stock, purchasing and jobs) that is just a database and Claude Code.</strong>
-</p>
+Orders, stock, purchasing and job costs in a database you own. A free operational ERP base for NZ and AU distributors, wholesalers and assembly workshops. MIT licensed. Works with Claude Code, Codex, OpenCode or Cursor.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free. Clone, run the demo, import your records. | Your fields, rules, Business Central data, web front end or different stack. | Installed, connected and operated through Omni by Enterprise DNA. Setup fee, then a retainer. |
+| [Quick start](#quick-start) | [Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github&utm_medium=customise) | [Book a call](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github&utm_medium=managed) |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Microsoft Dynamics 365 Business Central data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=business-central">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/business-central?utm_source=github&utm_medium=readme&utm_campaign=business-central">How it works</a></td>
-  </tr>
-</table>
+## The weekly routine
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-business-central">Instead of Microsoft Dynamics 365 Business Central</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+Review orders, plan dispatch, chase suppliers, reorder stock and check job margins. The base records customers, suppliers, items, warehouses, sales and purchase orders, partial receipts and shipments, stock movements, job budgets and costs, ledger balance snapshots, document evidence and change history. Accounting stays in the existing ledger.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
+Microsoft's [Australian pricing page](https://www.microsoft.com/en-au/dynamics-365/products/business-central/pricing), checked 26 September 2026, lists Essentials at A$119.70 and Premium at A$164.60 per user per month, paid yearly, excluding GST. For 10 to 30 full users that is A$14,364 to A$59,256 a year in licences, depending on plan and headcount. This is a calculated licence range, not a claim about an actual customer's all-in invoice. Partner work and extras need their own quote.
 
----
-
-## What is this
-
-ERP for Claude Code does the job you pay Microsoft Dynamics 365 Business Central for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Microsoft Dynamics 365 Business Central dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Microsoft Dynamics 365 Business Central per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=business-central).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
+Harbour Supply Demo has an overdue pump order short of stock, a late supplier delivery, a workshop job over budget, an overdue customer balance and incomplete archive evidence. These records are fictional. Dates are relative to the first seed and repeated seeding preserves existing data.
 
 ## Quick start
 
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Node 20 or later on Windows or Linux:
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/erp-for-claude-code.git
 cd erp-for-claude-code
 npm install
 npm run demo
+npm test
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Open the folder in your coding agent and ask “What can we ship this week?” or run `/dispatch`. The same AGENTS.md and CLAUDE.md work across runtimes. No database server is needed for the demo. PGlite stores local records under .data/db and serves one process at a time.
 
-### Use it with your own Postgres or Supabase
+For real records, choose a new DATA_DIR, migrate, then run setup and import. Never seed production. DATABASE_URL selects shared Postgres through the same adapter. Configure scoped access, verified TLS, backups and a tested restore before sharing. One database holds one company, currency and jurisdiction. Amounts exclude tax and quantities use each item's base unit.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## Commands
 
-## The commands
+45 CLI commands return human-readable results or --json. There are 47 slash recipes: 45 CLI commands plus /customise and /new-view. Names match without case, IDs by prefix, and ambiguous matches list candidates and exit 1. [CLI arguments and calculations](docs/cli.md).
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
-
-| Command | What it does |
+| Recipe | What it does |
 |---|---|
-| `/...` | ... |
+| /activity | Read order follow-up notes. |
+| /add | Read docs/cli.md for the allowed entities and fields |
+| /adjust-stock | Read stock first |
+| /attention | Find late, quiet and unreleased orders and over-budget jobs. |
+| /audit | Read the change history. |
+| /cancel-order | Read the order first |
+| /cash | Compare overdue and upcoming balances, without treating them as bank cash. |
+| /close-job | Read the costs, delivery position and outstanding tasks |
+| /compliance | Read docs/compliance.md and run the source-backed record checks |
+| /credit-watch | Find customers whose recorded outstanding balance exceeds their credit limit. |
+| /customers | List customers and credit limits. |
+| /customise | Read CLAUDE.md, the relevant CLI command and the schema |
+| /dimensions | Group order value and progress by department. |
+| /dispatch | Review open sales lines in due-date order with stock shortages. |
+| /draft-chase | Read the remaining quantities and supplier follow-up |
+| /draft-order | Read the order and create a local draft in drafts/ |
+| /export | Write a complete data snapshot including movements and audit |
+| /help | List commands and open the CLI guide. |
+| /import | Read docs/replace-business-central.md |
+| /invoice-balance | Copy the balance verified in the existing accounting ledger |
+| /items | List item costs, prices, units and preferred suppliers. |
+| /job | Show the budget and recorded costs |
+| /jobs | Compare job budgets, costs and agreed revenue. |
+| /line | Read the draft order and item |
+| /locations | List warehouses. |
+| /log-cost | Record a documented job cost, excluding tax, in the configured currency |
+| /log | Read the order then record the factual follow-up |
+| /margins | Review fulfilled sales margins using cost at order entry. |
+| /movements | Read stock movement history. |
+| /new-view | Read the operator question and the relevant records |
+| /order | Show the order, lines and activity before proposing a change. |
+| /payables | List supplier balances from the existing ledger. |
+| /purchase-orders | Read supplier order values and progress. |
+| /receivables | List customer balances from the existing ledger. |
+| /receive | Record only goods physically received |
+| /records | Read the retained evidence register. |
+| /release | Read the draft and confirm its real quantities, partner and due date |
+| /replenishment | Review shortages after open sales and purchases. |
+| /sales-orders | Read sales order values and progress. |
+| /set | Read the record first |
+| /settings | Read the business jurisdiction, currency and archive policy. |
+| /setup | Set one company per database |
+| /ship | Record only goods physically dispatched |
+| /stock | Compare stock on hand, open sales commitments and incoming purchases. |
+| /supplier-chase | List supplier orders due within a week and already late. |
+| /vendors | List suppliers and lead times. |
+| /weekly-review | Write the Monday plan from the three included reports: attention, dispatch and supplier-chase |
 
-## Instead of business-central
+## Ten questions beyond a fixed dashboard
 
-<!-- TODO(author): how to bring data across from Microsoft Dynamics 365 Business Central; link docs/replace-business-central.md -->
+These are working queries you can change. Business Central supports configurable reports too; this is not a claim that Microsoft cannot produce equivalent analysis.
 
-## Architecture
+1. Which overdue orders have also gone quiet for a week? `npm run erp -- attention`
+2. Which sales lines need more stock before they can ship? `npm run erp -- dispatch`
+3. What should we buy after counting open sales and incoming purchases? `npm run erp -- replenishment`
+4. Which suppliers have deliveries due this week or already late? `npm run erp -- supplier-chase`
+5. Which jobs have exceeded their budget and what margin remains? `npm run erp -- jobs`
+6. What margin have we actually shipped at the cost recorded on each line? `npm run erp -- margins`
+7. Which department holds the most unfulfilled order value? `npm run erp -- dimensions`
+8. Which customers exceed their credit limit on recorded ledger balances? `npm run erp -- credit-watch`
+9. What customer and supplier balances are overdue or due next week? `npm run erp -- cash`
+10. Which source records lack evidence or enough retention time? `npm run erp -- compliance`
 
-```
-erp-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
+## Your first hour: ten things to ask for
 
-## Built with Claude Code
+1. Put our name and colours on the purchase order.
+2. Add our warehouses and base item units.
+3. Do a test run with one Business Central export.
+4. Show orders that are both late and quiet.
+5. Explain what is stopping each dispatch.
+6. List purchases needed after outstanding deliveries arrive.
+7. Show the workshop jobs over budget.
+8. Draft a supplier follow-up for the late order.
+9. Add our buyer's reference with a numbered migration.
+10. Add a weekly view for our warehouse manager.
 
-This repository was built with Claude Code as the primary development tool, from the schema to the commands, and it is meant to be extended the same way. Ask for a new command and it writes one.
+## Documents and views
 
-## Contributing
+Change brand.json once. `npm run docs` creates draft purchase orders, sales confirmations and job cost sheets in docs-out/. `npm run view` creates week and cash snapshots in views/. Each document is keyed by record ID. Print HTML to PDF from a browser. Nothing sends. /new-view adds a question to the read-only renderer. /customise adds fields, stages or rules with a migration and tests.
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+## Bring your history
 
-## Want it installed and run for you?
+[The Business Central migration guide](docs/replace-business-central.md) covers Open in Excel, saving CSV, visible columns, one-company exports, import preview and reconciliation. `npm run erp -- import business-central bundle exports --location=MAIN --apply` imports supported files in one transaction. Keep a copy of the original exports. Standard English headings are supported; custom headings need mapping. Order lines bring across remaining quantities to avoid fulfilling completed history twice.
 
-Enterprise DNA installs ERP for Claude Code for your business, migrates your Microsoft Dynamics 365 Business Central data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+## Controls and scope
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=business-central)
-- Read more: [enterprisedna.co/omni/instead-of/business-central](https://enterprisedna.co/omni/instead-of/business-central?utm_source=github&utm_medium=readme&utm_campaign=business-central)
+A receipt or shipment cannot exceed the line's remaining quantity. Stock cannot go negative. Unique event references prevent a retry from duplicating a stock movement or job cost. Failed transactions and imports roll back. Audit events record CLI changes. Completed orders cannot be cancelled. Corrections preserve history.
 
-## License
+[Record checks](docs/compliance.md) cover NZ and AU retention dates, archive references, backup evidence and empty released orders, with sources. They check recorded evidence, not legal compliance. [Why no front end](docs/why-no-front-end.md) explains mobile, offline and scanning needs. Enterprise DNA builds those into your custom version.
 
-MIT. Copyright (c) 2026 Enterprise DNA.
+This is operational ERP, not the general ledger, manufacturing planning, payroll, banking, payments or tax filing. Stock margins use the cost frozen on the order line, not FIFO or statutory valuation. Job costs are entered explicitly. Invoice balances are snapshots from the accountant. The base does not claim full Business Central parity.
+
+## Verification
+
+`npm test` creates a temporary database, migrates and seeds it, exercises every CLI command, checks rollback, stock and cost calculations, duplicate receipts, ambiguous matches, imports and branded HTML. The suite runs on PGlite with no secrets. Windows-compatible paths and Node subprocesses are used. Hosted Postgres shares the SQL and adapter interface but requires validation in the installation. Agent usage and hosting have separate costs.
+
+## Licence and relationship
+
+MIT. Built by Enterprise DNA. Not affiliated with Microsoft or Anthropic. [Omni by Enterprise DNA](https://enterprisedna.co/omni/instead-of/business-central) installs, customises and runs your version. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github&utm_medium=readme).

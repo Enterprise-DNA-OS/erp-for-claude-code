@@ -1,43 +1,38 @@
-# ERP for Claude Code: operating instructions
+# ERP for Claude Code
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+## Business context
 
-## Who this is for
+Business: [your distributor, wholesaler or assembly workshop]. Operator: [name and role]. One database holds one company, one jurisdiction and one currency. What matters: orders shipped, suppliers chased, stock reconciled and job costs known. Harbour Supply Demo is fictional.
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
+## Routes
 
-Fill this in once. A worker with context knows. A worker without it guesses.
+Read the matching .claude/commands recipe. Exact arguments and boundaries: docs/cli.md.
 
-## How to work
-
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
-
-## Routing table: one right way for each recurring job
-
-| When the operator asks for... | Use this |
+| Job | Route |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| Start the day | attention, dispatch, supplier-chase |
+| Reorder stock | stock, replenishment, add order, line, release |
+| Receive and dispatch | order, receive, ship, movements |
+| Review work | jobs, job, log-cost, close-job |
+| Review money | margins, dimensions, receivables, payables, cash, credit-watch |
+| Read records | customers, vendors, items, locations, records, activity, audit |
+| Record changes | add, set, line, release, cancel-order, log, adjust-stock, invoice-balance |
+| Monday | weekly-review combines three live reads |
+| Record checks | compliance, docs/compliance.md |
+| Draft paperwork | draft-order, draft-chase, npm run docs |
+| Views | npm run view, new-view |
+| Move or tailor | setup, import, export, customise |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+## Rules
 
-## Hard rules
+Read fresh data first. Never invent receipts, shipments, stock counts, costs, evidence or ledger balances. List ambiguous candidates. Nothing sends, pays, files tax or deletes records. Drafts stay in drafts/. Accounting, bank reconciliation and tax remain in the existing ledger.
 
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
+Read docs/compliance.md before changing record checks. A PASS is not legal certification. Keep sources, backups and original exports. All amounts exclude tax, use one configured currency and quantities use the item's base unit. Costed shipments use the cost frozen on the order line, not FIFO or an accounting inventory valuation. Job costs are explicit entries and are not copied automatically from orders.
 
-## Where things live
+Use the CLI for writes and parameterised SQL for new commands. Add numbered migrations, never edit an applied migration. Back up and run npm test before real changes. Do not seed production. PGlite allows one local process at a time. Shared Postgres needs scoped access, verified TLS and backups.
 
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off Microsoft Dynamics 365 Business Central.
+## Files
 
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/business-central
+Schema: supabase/migrations. CLI: scripts/erp.mjs. Reports: scripts/lib/domain.mjs. Import: scripts/lib/import.mjs. Brand: brand.json. HTML: docs-out and views. Migration guide: docs/replace-business-central.md. All agents follow AGENTS.md.
+
+Omni by Enterprise DNA installs, customises and operates this for you: https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github

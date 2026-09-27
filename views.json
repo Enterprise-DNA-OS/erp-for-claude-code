@@ -1,13 +1,35 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "ERP for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Operations this week",
+    "subtitle": "One company. All amounts in the configured currency, excluding tax.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Orders needing attention",
+        "sql": "select code,kind,partner,status,due_date::text,remaining_value from v_orders where status in ('open','draft') order by due_date"
+      },
+      {
+        "title": "Stock commitments",
+        "sql": "select code,name,location,on_hand,committed,incoming,on_hand-committed as available from v_stock order by code,location"
+      },
+      {
+        "title": "Jobs",
+        "sql": "select code,name,status,budget,cost,budget_left,margin from v_jobs order by code"
+      }
+    ]
+  },
+  {
+    "name": "cash",
+    "title": "Ledger balances and purchasing",
+    "sections": [
+      {
+        "title": "Imported ledger balances",
+        "note": "Record snapshots, not bank balances or tax calculations.",
+        "sql": "select code,kind,due_date::text,total,paid,total-paid as outstanding,ledger_ref from invoices where total>paid order by due_date"
+      },
+      {
+        "title": "Supplier commitments",
+        "sql": "select code,partner,due_date::text,remaining_value from v_orders where kind='purchase' and status='open' order by due_date"
       }
     ]
   }
