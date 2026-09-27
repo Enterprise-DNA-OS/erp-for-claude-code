@@ -137,4 +137,4 @@ This is operational ERP, not the general ledger, manufacturing planning, payroll
 
 ## Licence and relationship
 
-MIT. Built by Enterprise DNA. Not affiliated with Microsoft or Anthropic. [Omni by Enterprise DNA](https://enterprisedna.co/omni/instead-of/business-central) installs, customises and runs your version. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github&utm_medium=readme).
+MIT. Built by Enterprise DNA. Not affiliated with Microsoft or Anthropic. [Omni by Enterprise DNA](https://enterprisedna.co/omni/instead-of/business-central?utm_source=github&utm_medium=readme&utm_campaign=business-central) installs, customises and runs your version. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=business-central&utm_source=github&utm_medium=readme).
